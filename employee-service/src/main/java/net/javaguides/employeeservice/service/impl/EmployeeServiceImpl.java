@@ -1,13 +1,17 @@
 package net.javaguides.employeeservice.service.impl;
 
 import lombok.AllArgsConstructor;
+import net.javaguides.employeeservice.dto.APIResponseDto;
+import net.javaguides.employeeservice.dto.DepartmentDto;
 import net.javaguides.employeeservice.dto.EmployeeDto;
 import net.javaguides.employeeservice.entity.Employee;
 import net.javaguides.employeeservice.exception.EmailAlreadyExistsException;
 import net.javaguides.employeeservice.mapper.EmployeeMapper;
 import net.javaguides.employeeservice.repository.EmployeeRepository;
 import net.javaguides.employeeservice.service.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -15,10 +19,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
+    private RestTemplate restTemplate;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-        if (employeeRepository.findByEmail(employeeDto.getEmail()).get() != null) {
+        if (employeeRepository.findByEmail(employeeDto.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email Already Exists for Employee");
         }
 
@@ -31,13 +36,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long employeeId) {
+    public APIResponseDto getEmployeeById(Long employeeId) {
 
         Employee employee = employeeRepository.findById(employeeId).get();
 
+        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity("http://localhost:8080/api/departments/" + employee.getDepartmentCode(),
+                DepartmentDto.class);
+
+        DepartmentDto departmentDto = responseEntity.getBody();
+
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
-        return employeeDto;
+        APIResponseDto apiResponseDto = new APIResponseDto();
+        apiResponseDto.setEmployeeDto(employeeDto);
+        apiResponseDto.setDepartmentDto(departmentDto);
+
+        return apiResponseDto;
     }
 
 

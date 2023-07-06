@@ -1,6 +1,7 @@
 package net.javaguides.employeeservice.controller;
 
 import lombok.AllArgsConstructor;
+import net.javaguides.employeeservice.dto.APIResponseDto;
 import net.javaguides.employeeservice.dto.EmployeeDto;
 import net.javaguides.employeeservice.entity.Employee;
 import net.javaguides.employeeservice.service.EmployeeService;
@@ -23,8 +24,8 @@ public class EmployeeController {
 
     // Build get employee REST API
     @GetMapping("{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") Long employeeId) {
-        EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
-        return new ResponseEntity<>(employeeDto, HttpStatus.OK);
+    public ResponseEntity<APIResponseDto> getEmployeeById(@PathVariable("id") Long employeeId) {
+        APIResponseDto apiResponseDto = employeeService.getEmployeeById(employeeId);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }
