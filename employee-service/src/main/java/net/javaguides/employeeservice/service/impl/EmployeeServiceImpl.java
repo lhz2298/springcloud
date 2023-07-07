@@ -8,6 +8,7 @@ import net.javaguides.employeeservice.entity.Employee;
 import net.javaguides.employeeservice.exception.EmailAlreadyExistsException;
 import net.javaguides.employeeservice.mapper.EmployeeMapper;
 import net.javaguides.employeeservice.repository.EmployeeRepository;
+import net.javaguides.employeeservice.service.APIClient;
 import net.javaguides.employeeservice.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 //    private RestTemplate restTemplate;
-    private WebClient webClient;
+//    private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -47,14 +49,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 //
 //        DepartmentDto departmentDto = responseEntity.getBody();
 
-        DepartmentDto departmentDto = webClient.get()
-                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-                // Retrieve a response
-                .retrieve()
-                // Get the response type
-                .bodyToMono(DepartmentDto.class)
-                // Synchronous call
-                .block();
+//        DepartmentDto departmentDto = webClient.get()
+//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+//                // Retrieve a response
+//                .retrieve()
+//                // Get the response type
+//                .bodyToMono(DepartmentDto.class)
+//                // Synchronous call
+//                .block();
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
